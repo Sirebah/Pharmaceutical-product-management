@@ -28,14 +28,13 @@ public class ReportController {
         try {
             logger.info("Début de la génération du rapport...");
 
-            // Générer le rapport PDF
+
             byte[] pdfBytes = reportService.generateReport();
 
-            // Nom du fichier avec timestamp si non fourni
+
             String outputFilename = fileName != null ? fileName :
                     "rapport_produit_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
 
-            // Préparer les en-têtes HTTP
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", outputFilename);

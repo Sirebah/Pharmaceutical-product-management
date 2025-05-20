@@ -39,10 +39,10 @@ public class ReportService {
     public byte[] generateReport(Map<String, Object> customParameters) throws JRException, SQLException {
         logger.info("Début de la génération du rapport avec paramètres: {}", customParameters);
 
-        // Charger et compiler le .jrxml en JasperReport
+
         JasperReport jasperReport = compileJrxmlReport();
 
-        // Préparer les paramètres
+
         Map<String, Object> parameters = prepareParameters(customParameters);
 
         try (Connection connection = dataSource.getConnection()) {
