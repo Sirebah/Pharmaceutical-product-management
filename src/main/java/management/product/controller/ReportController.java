@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 @RestController
 public class ReportController {
@@ -52,4 +51,32 @@ public class ReportController {
                     .body("Error generating the report: " + e.getMessage());
         }
     }
+    @PostMapping("/generate-report")
+    public ResponseEntity<?> generateReport(@RequestBody(required = false) Map<String, Object> params) {
+        try {
+            logger.info("POST request received to generate report with parameters: {}", params);
+
+            byte[] pdfBytes = reportService.generateReport(params);
+
+            String outputFilename = "product_report_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", outputFilename);
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            logger.info("Report generated successfully via POST");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfBytes);
+
+        } catch (Exception e) {
+            logger.error("Error while generating report via POST", e);
+            return ResponseEntity.internalServerError()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Error generating the report: " + e.getMessage());
+        }
+    }
+
 }
