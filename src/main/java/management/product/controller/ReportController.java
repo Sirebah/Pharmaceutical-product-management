@@ -26,31 +26,30 @@ public class ReportController {
     public ResponseEntity<?> downloadReport(
             @RequestParam(required = false) String fileName) {
         try {
-            logger.info("Début de la génération du rapport...");
-
+            logger.info("Starting report generation...");
 
             byte[] pdfBytes = reportService.generateReport();
 
-
             String outputFilename = fileName != null ? fileName :
-                    "rapport_produit_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
+                    "product_report_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", outputFilename);
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
-            logger.info("Rapport généré avec succès, taille: {} octets", pdfBytes.length);
+            logger.info("Report generated successfully, size: {} bytes", pdfBytes.length);
 
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(pdfBytes);
 
         } catch (Exception e) {
-            logger.error("Erreur lors de la génération du rapport", e);
+            logger.error("Error while generating report", e);
+
             return ResponseEntity.internalServerError()
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Erreur lors de la génération du rapport: " + e.getMessage());
+                    .body("Error generating the report: " + e.getMessage());
         }
     }
 }
