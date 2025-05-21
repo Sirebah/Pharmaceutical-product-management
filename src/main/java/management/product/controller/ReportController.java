@@ -1,5 +1,7 @@
 package management.product.controller;
 
+import management.product.domain.Produit;
+import management.product.service.ProductService;
 import management.product.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,8 @@ public class ReportController {
 
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/download-report")
     public ResponseEntity<?> downloadReport(
@@ -78,5 +82,15 @@ public class ReportController {
                     .body("Error generating the report: " + e.getMessage());
         }
     }
+
+    @PostMapping("/create")
+    public ResponseEntity<Produit> createProduct(@RequestBody Produit produit){
+        Produit saved = productService.create(produit);
+        return ResponseEntity.ok().body(saved);
+
+
+    }
+
+
 
 }
